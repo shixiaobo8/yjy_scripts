@@ -8,19 +8,19 @@ import paramiko as pmk
 
 class changeMediaRes(object):
 	def __init__(self,dbname):
-		# åå§åæ°æ®åºé¾æ¥
+		# 初始化数据库链接
 		self.conn=mdb.connect(host="localhost",user='root',passwd='abcxxx123',db=dbname,unix_socket='/tmp/mysql.sock')
 		self.cursor=self.conn.cursor()
-		# åå§åè§é¢æå¡å¨è¿æ¥
+		# 初始化视频服务器连接
 		self.ssh = pmk.SSHClient()
 		self.ssh.set_missing_host_key_policy(pmk.AutoAddPolicy())
 		self.ssh.connect('10.46.180.21',2282,'root')
-		# åå§åaesçæè®°å½æä»¶
+		# 初始化aes生成记录文件
 		#rs_txt = datetime.datetime.now().striftime('%Y_%m_%d') + '.txt'
 		self.rs_txt = '/rs.txt'
 		#res = {'conn':conn,'cursor':cursor,'ssh':ssh,'rs_txt':rs_txt}
 		
-	# è§£å³media_url ä¸ä¸ºç©ºä½æ¯ä¸æ¯aesçurlé®é¢
+	# 解决media_url 不为空但是不是aes的url问题
 	def change_media_url(self):
 		try:
 			self.cursor.execute("select `id`,`media_url` from yjy_im_chat_aes where media_url not like '%aes%' and media_url!='';")
@@ -30,6 +30,7 @@ class changeMediaRes(object):
 				url=data[1]
 				mu_38 = (url.split('/')[-1]).split('.')[0] + '_aes' + '.m3u8'
 				mu_38 = (url.split('/')[-1]).split('.')[0] + '_aes' + '.m3u8'
+				aes_u = 'aes_' + (url.split('/')[-2]) 
 				new_url = '/'.join(url.split('/')[:-2]) + '/' + aes_u + '/' +  mu_38
 				sql="update yjy_im_chat_aes set media_url = '%s' where id=%d;"%(new_url,data[0])
 				self.cursor.execute(sql)
@@ -39,7 +40,7 @@ class changeMediaRes(object):
 			self.conn.rollback()
    			self.conn.close()
 
-	# è§£å³media_urlé¾æ¥æ­£ç¡®ä½æ¯file_sizeä¸æ­£ç¡®æè404é®é¢
+	# 解决media_url链接正确但是file_size不正确或者404问题
 	def change_file_size(self):
 		try:
 			self.cursor.execute("select `id`,`media_url`,`file_size` from yjy_im_chat_aes where file_size='' and media_url!='';")
@@ -51,7 +52,7 @@ class changeMediaRes(object):
 				server_file_path=url.replace('http://m1.letiku.net','/data/hls').replace('http://media.yijiaoyuan.net:9999','/data/hls')
 				stdin,stdout,stderr = self.ssh.exec_command('ls ' + '/'.join(server_file_path.split('/')[:-1]))
 				file = stdout.readlines()
-				# å¦ææ²¡æaeså å¯è§é¢åçæå å¯è§é¢
+				# 如果没有aes加密视频则生成加密视频
 				if not file:
 					file = ''.join(server_file_path).replace('_aes','').replace('aes_','')
 					stdin,stdout,stderr = self.ssh.exec_command('echo '  + '>' + rs_txt)
@@ -60,7 +61,7 @@ class changeMediaRes(object):
 					result = stdout.readlines()
 					if not result:
 						print file
-				#å¼å§è·åæä»¶å¤§å°å¹¶æ¿æ¢æ°æ®
+				#开始获取文件大小并替换数据
 				stdin,stdout,stderr = self.ssh.exec_command('du -sh ' + '/'.join(server_file_path.split('/')[:-1]))
 				file_size = stdout.readlines()
 				file_size = file_size[0].split('\t')[0].strip('M')
