@@ -129,7 +129,7 @@ def get_ts_url(auth_m3u8_url):
 
 # 从数据库视频源地址
 def get_video_source_url(clt):
-    sql = "select `vid` from yjy_10_im_course;"
+    sql = "select `vid` from im_course;"
     course_vids = execute_sql(sql)
     for vid in course_vids:
         try:
