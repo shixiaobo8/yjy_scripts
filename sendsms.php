@@ -5,12 +5,12 @@ $url = 'http://web.wasun.cn/asmx/smsservice.aspx';
 
 // 短信数组
 $data = array(
-	'name' => 'warning', //用户名
-	'pwd' => '30C9A3407373F0296C4B6FE1BC03', //密码
+	'name' => 'xxxxxxxxxxxx', //用户名
+	'pwd' => 'xxxxxxxxxxxxxxxxx', //密码
 	'content' => '', //运维短信通过的审核模板为【医教园运维】IP：@，监控项目：@， 级别：@
 	'mobile' => '', //发送的手机号码,多个号码用逗号隔开
-	'sign' => '【医教园运维】', //必填参数.用户签名
-	'type' => 'pt' //必填选项 固定值pt
+	'sign' => '【xxxxxxxxxxx】', //必填参数.用户签名
+	'type' => 'xxxxxxxx' //必填选项 固定值pt
 );
 
 // 接收命令行参数
