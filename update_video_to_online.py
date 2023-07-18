@@ -8,9 +8,9 @@ class updateDbTool:
 	def __init__(self,dbname):
 		self.dbname = dbname
 		try:
-			self.sandbox_conn = mdb.connect('localhost',user='root',passwd='abcxxx123',db=dbname,unix_socket='/tmp/mysql.sock')
+			self.sandbox_conn = mdb.connect('xxxxxxxxxxxxx',user='root',passwd='xxxxxx',db=dbname,unix_socket='/tmp/mysql.sock')
 			self.sandbox_cursor = self.sandbox_conn.cursor()
-			self.online_conn = mdb.connect('10.24.203.239',user='root',passwd='abcxxx123',db=dbname,unix_socket='/tmp/mysql.sock')
+			self.online_conn = mdb.connect('xxxxxxxxxx',user='root',passwd='xxxxxxxx',db=dbname,unix_socket='/tmp/mysql.sock')
 			self.online_cursor = self.online_conn.cursor()
 		except mdb.Error,e:
 			print e
